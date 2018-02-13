@@ -32,6 +32,7 @@ public class MusicControls extends CordovaPlugin {
 	private AudioManager mAudioManager;
 	private PendingIntent mediaButtonPendingIntent;
 	private boolean mediaButtonAccess=true;
+	private boolean destroy_all = false;
 
 
 	private void registerBroadcaster(MusicControlsBroadcastReceiver mMessageReceiver){
@@ -103,6 +104,10 @@ public class MusicControls extends CordovaPlugin {
 		final Context context=this.cordova.getActivity().getApplicationContext();
 		final Activity activity=this.cordova.getActivity();
 
+		if(this.destroy_all){
+			return true;
+		}
+
 		if (action.equals("create")) {
 			final MusicControlsInfos infos = new MusicControlsInfos(args);
 			this.cordova.getThreadPool().execute(new Runnable() {
@@ -142,6 +147,7 @@ public class MusicControls extends CordovaPlugin {
 
 	@Override
 	public void onDestroy() {
+		this.destroy_all = true;
 		this.notification.destroy();
 		this.mMessageReceiver.stopListening();
 		this.unregisterMediaButtonEvent();
